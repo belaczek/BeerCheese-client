@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, ModalBody, Button, Form, FormGroup, Input, Label } from 'reactstrap';
 import { connect } from 'react-redux';
 import { login } from '../../actions/auth';
+import localizedTexts from '../../text_localization/LocalizedStrings';
 
 class loginModal extends React.Component {
 
@@ -39,17 +40,17 @@ class loginModal extends React.Component {
         <ModalBody>
           <Form onSubmit={this.handleLogin}>
             <FormGroup>
-              <Label for="username">Jméno</Label>
-              <Input type="text" name="username" id="username" placeholder="Uživatelské jméno" value={this.state.username} onChange={this.updateUsernameValue} />
+              <Label for="username">{localizedTexts.logIn.name}</Label>
+              <Input type="text" name="username" id="username" placeholder="{localizedTexts.logIn.name}" value={this.state.username} onChange={this.updateUsernameValue} />
             </FormGroup>
             <FormGroup>
-              <Label for="password">Heslo</Label>
-              <Input type="password" name="password" id="password" placeholder="Heslo" value={this.state.password} onChange={this.updatePasswordValue} />
+              <Label for="password">{localizedTexts.logIn.pass}</Label>
+              <Input type="password" name="password" id="password" placeholder="{localizedTexts.logIn.pass}" value={this.state.password} onChange={this.updatePasswordValue} />
             </FormGroup>
-            <Button type="submit">Přihlásit</Button>
+            <Button type="submit">{localizedTexts.logIn.btnSignIn}</Button>
           </Form>
-          {auth.isFetching && <p>Čekejte prosím</p>}
-          {auth.err && <p color="warning">Chyba přihlášení: {JSON.stringify(auth.err)}</p>}
+          {auth.isFetching && <p>{localizedTexts.logIn.waiting}</p>}
+          {auth.err && <p color="warning">{localizedTexts.logIn.error}: {JSON.stringify(auth.err)}</p>}
         </ModalBody>
       </Modal>
     );

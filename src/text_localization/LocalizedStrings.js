@@ -125,7 +125,9 @@ export default new LocalizedStrings({
       name: 'Jméno',
       mandatoryField: 'Políčko je povinné',
       pass: 'Heslo',
-      btnSignIn: 'Přihlásit'
+      btnSignIn: 'Přihlásit',
+      waiting: 'Čekejte prosím',
+      error: 'Chyba přihlášení'
     },
     categories: {
       black: 'Černé',
