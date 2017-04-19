@@ -17,8 +17,6 @@ class AdminCustomersPage extends React.Component {
   componentDidMount() {
     api.get('users')
       .then((response) => {
-        console.log("response", response);
-
         if (response) {
 
           let loadedUsers = response.data.users.items.map((item) => {
@@ -41,14 +39,14 @@ class AdminCustomersPage extends React.Component {
     return this.state.customers.map(user => {
       return (
         <tr key={user.id}>
-          <td>{user.user.id}</td>
-          <td>{user.user.firstName}</td>
-          <td>{user.user.lastName}</td>
-          <td>{user.user.email}</td>
+          <td>{user.id}</td>
+          <td>{user.firstName}</td>
+          <td>{user.lastName}</td>
+          <td>{user.email}</td>
           <td>
             <Button
               onClick={() =>
-                this.props.openModal({name: 'editCustomerAdmin', data: user.user})}
+                this.props.openModal({name: 'editCustomerAdmin', data: user})}
             >
               <i className="fa fa-pencil"/>
             </Button>
