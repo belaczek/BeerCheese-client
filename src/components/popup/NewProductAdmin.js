@@ -13,14 +13,17 @@ export default class NewProductAdmin extends React.Component {
     this.state = {
       categories: [],
       subCategories: [],
-      suppliers: []
+      suppliers: [],
+      category: 1,
+      quantity: 0,
+      description: ""
     };
   }
 
   componentDidMount() {
     this.loadSuppliers();
     this.loadCategories();
-    this.loadSubCategories(1);
+    this.loadSubCategories(this.state.category);
   }
 
   loadSuppliers = () => {
@@ -74,10 +77,11 @@ export default class NewProductAdmin extends React.Component {
   onSubmit = (event) => {
     event.preventDefault();
     let formData = new FormData(event.target);
-
-    api.post('products', this.buildNewProductParams(formData))
+    console.log("data", this.buildNewProductParams());
+    api.post('products', this.buildNewProductParams())
       .then(response => {
-        this.uploadProductImage(response.data.product, formData)
+        // TODO this.uploadProductImage(response.data.product, formData)
+        console.log("response", response);
       })
       .catch(response => {
         console.log('error creating product ', response);
@@ -85,31 +89,38 @@ export default class NewProductAdmin extends React.Component {
   };
 
   uploadProductImage = (newProduct, formData) => {
-    imageApi.instance.headers.post['Content-Type'] = 'multipart/form-data';
-    imageApi.post(newProduct.image, formData.get("image"))
+    let config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+    imageApi.post(newProduct.image, formData.get("image"), config)
       .then(response => {
         console.log('image uploaded ', response);
+        this.props.hideModals();
       })
       .catch(response => {
         console.log('error uploading image ', response);
       });
   };
 
-  buildNewProductParams = (formData) => {
-    let result = {};
-
-    for (let pair of formData.entries()) {
-      result[pair[0]] = pair[1];
-    }
-    result.category = "/api/categories/" + formData.get("category");
-    result.supplier = "/api/suppliers/" + formData.get("supplier");
-    result.subcategory = "/api/subcategories/" + formData.get("subcategory");
-    delete result.image;
-    return result;
+  buildNewProductParams = () => {
+    let data = {};
+    data.name = this.state.name;
+    data.price = this.state.price;
+    data.priceAfterDiscount = this.state.priceAfterDiscount;
+    data.quantity = this.state.quantity;
+    data.description = this.state.description || "";
+    data.category = "/api/categories/" + this.state.category;
+    data.supplier = "/api/suppliers/" + this.state.supplier;
+    return {
+      product: data
+    };
   };
 
   onCategoryChosen = (event) => {
     this.loadSubCategories(event.target.value);
+    this.onInputChange(event);
   };
 
   renderCategoryOptions = () => {
@@ -148,6 +159,12 @@ export default class NewProductAdmin extends React.Component {
     reader.readAsDataURL(file);
   };
 
+  onInputChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value
+    })
+  };
+
   render() {
     return (
       <Modal isOpen={true} toggle={this.props.hideModals}>
@@ -161,7 +178,7 @@ export default class NewProductAdmin extends React.Component {
                 <FormGroup row>
                   <Label for="name" sm={4}>Název</Label>
                   <Col sm={8}>
-                    <Input required type="text" name="name" id="name"/>
+                    <Input onChange={this.onInputChange} required type="text" name="name" id="name"/>
                   </Col>
                 </FormGroup>
 
@@ -169,7 +186,7 @@ export default class NewProductAdmin extends React.Component {
                   <Label for="price" sm={4}>Cena</Label>
                   <Col sm={8}>
                     <InputGroup>
-                      <Input required type="number" name="price" id="price"/>
+                      <Input onChange={this.onInputChange} required type="number" name="price" id="price"/>
                       <InputGroupAddon>Kč</InputGroupAddon>
                     </InputGroup>
                   </Col>
@@ -179,7 +196,7 @@ export default class NewProductAdmin extends React.Component {
                   <Label for="priceAfterDiscount" sm={4}>Cena po slevě</Label>
                   <Col sm={8}>
                     <InputGroup>
-                      <Input type="number" name="priceAfterDiscount" id="priceAfterDiscount"/>
+                      <Input onChange={this.onInputChange} type="number" name="priceAfterDiscount" id="priceAfterDiscount"/>
                       <InputGroupAddon>Kč</InputGroupAddon>
                     </InputGroup>
                   </Col>
@@ -189,7 +206,7 @@ export default class NewProductAdmin extends React.Component {
                   <Label for="quantity" sm={4}>Skladem</Label>
                   <Col sm={8}>
                     <InputGroup>
-                      <Input type="number" name="quantity" id="quantity" defaultValue="0"/>
+                      <Input onChange={this.onInputChange} type="number" name="quantity" id="quantity" defaultValue="0"/>
                       <InputGroupAddon>Ks</InputGroupAddon>
                     </InputGroup>
                   </Col>
@@ -208,7 +225,8 @@ export default class NewProductAdmin extends React.Component {
                 <FormGroup row>
                   <Label for="subcategory" sm={4}>Podkategorie</Label>
                   <Col sm={8}>
-                    <Input disabled={this.state.subCategories.length === 0}
+                    <Input onChange={this.onInputChange}
+                           disabled={this.state.subCategories.length === 0}
                            required type="select" name="subcategory" id="subcategory">
                       {this.renderSubCategoryOptions()}
                     </Input>
@@ -218,7 +236,8 @@ export default class NewProductAdmin extends React.Component {
                 <FormGroup row>
                   <Label for="supplier" sm={4}>Dodavatel</Label>
                   <Col sm={8}>
-                    <Input type="select" name="supplier" id="supplier">
+                    <Input onChange={this.onInputChange}
+                           type="select" name="supplier" id="supplier">
                       {this.renderSupplierOptions()}
                     </Input>
                   </Col>
@@ -227,7 +246,7 @@ export default class NewProductAdmin extends React.Component {
                 <FormGroup row>
                   <Label for="description" sm={4}>Popis</Label>
                   <Col sm={8}>
-                    <Input type="textarea" name="description" id="description"/>
+                    <Input onChange={this.onInputChange} type="textarea" name="description" id="description"/>
                   </Col>
                 </FormGroup>
 
