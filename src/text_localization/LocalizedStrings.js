@@ -128,6 +128,7 @@ export default new LocalizedStrings({
       btnSignIn: 'Přihlásit',
       waiting: 'Čekejte prosím',
       error: 'Chyba přihlášení'
+<<<<<<< HEAD
     },
     registration: {
       title: 'Registrace',
@@ -141,6 +142,8 @@ export default new LocalizedStrings({
       question: 'Bezpečnostní otázka',
       answer: 'Bezpečnostní odpověď',
       register: 'Registrovat'
+=======
+>>>>>>> 5987057d853c2fba3195aef52a66d0f2552a6df8
     },
     categories: {
       black: 'Černé',
