@@ -34,22 +34,22 @@ class NavBar extends Component {
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav className="ml-auto" navbar>
             <NavItem>
-              <NavLink tag={Link} to="/admin/customers">
+              <NavLink tag={Link} to="/app/admin/customers">
                 {localizedTexts.NavBar.customers}
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink tag={Link} to="/admin/suppliers">
+              <NavLink tag={Link} to="/app/admin/suppliers">
                 {localizedTexts.NavBar.suppliers}
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink tag={Link} to="/admin/products">
+              <NavLink tag={Link} to="/app/admin/products">
                 {localizedTexts.NavBar.products}
               </NavLink>
             </NavItem>
             <NavItem>
-              <NavLink tag={Link} to="/admin/orders">
+              <NavLink tag={Link} to="/app/admin/orders">
                 {localizedTexts.NavBar.orders}
               </NavLink>
             </NavItem>
