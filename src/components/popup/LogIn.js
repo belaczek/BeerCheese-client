@@ -5,22 +5,12 @@ import { login } from '../../actions/auth';
 
 class loginModal extends React.Component {
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      errors: {}
-    };
-
-    this.handleLogin = this.handleLogin.bind(this);
-  };
+  state = { errors: {} };
 
   handleLogin = event => {
     event.preventDefault();
 
     const { login } = this.props;
-
-    console.log(this.state.username);
 
     login({
       username: this.state.username,
