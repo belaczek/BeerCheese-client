@@ -8,15 +8,23 @@ import api from '../../api';
 
 export default class NewSupplierAdmin extends React.Component {
 
+  state = {};
+
   onSubmit = (event) => {
     event.preventDefault();
-    api.post('suppliers', new FormData(event.target))
+    api.post('suppliers', {supplier: this.state})
       .then(data => {
-        console.log('success ', data);
+        this.props.hideModals();
       })
       .catch(response => {
         console.log('error ', response);
       });
+  };
+
+  onInputChange = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value
+    })
   };
 
   render() {
@@ -31,14 +39,14 @@ export default class NewSupplierAdmin extends React.Component {
                 <FormGroup row>
                   <Label for="name" sm={3}>Jméno</Label>
                   <Col sm={9}>
-                    <Input required type="text" name="name" id="name"/>
+                    <Input required type="text" onChange={this.onInputChange} name="name" id="name"/>
                   </Col>
                 </FormGroup>
 
                 <FormGroup row>
                   <Label for="phoneNumber" sm={3}>Telefon</Label>
                   <Col sm={9}>
-                    <Input required type="number" name="phoneNumber" id="phoneNumber"/>
+                    <Input onChange={this.onInputChange} required type="number" name="phoneNumber" id="phoneNumber"/>
                   </Col>
                 </FormGroup>
 
@@ -46,7 +54,7 @@ export default class NewSupplierAdmin extends React.Component {
                   <Label for="deliveryTime" sm={3}>Dodací lhůta</Label>
                   <Col sm={9}>
                     <InputGroup>
-                      <Input required type="number" name="deliveryTime" id="deliveryTime"/>
+                      <Input onChange={this.onInputChange} required type="number" name="deliveryTime" id="deliveryTime"/>
                       <InputGroupAddon>Dny</InputGroupAddon>
                     </InputGroup>
                   </Col>
