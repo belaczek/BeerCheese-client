@@ -8,17 +8,14 @@ import api, { imageApi } from '../../api';
 
 export default class NewProductAdmin extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      categories: [],
-      subCategories: [],
-      suppliers: [],
-      category: 1,
-      quantity: 0,
-      description: ""
-    };
-  }
+  state = {
+    categories: [],
+    subCategories: [],
+    suppliers: [],
+    category: 1,
+    quantity: 0,
+    description: ""
+  };
 
   componentDidMount() {
     this.loadSuppliers();
@@ -77,7 +74,6 @@ export default class NewProductAdmin extends React.Component {
   onSubmit = (event) => {
     event.preventDefault();
     let formData = new FormData(event.target);
-    console.log("data", this.buildNewProductParams());
     api.post('products', this.buildNewProductParams())
       .then(response => {
         // TODO this.uploadProductImage(response.data.product, formData)
@@ -96,7 +92,6 @@ export default class NewProductAdmin extends React.Component {
     };
     imageApi.post(newProduct.image, formData.get("image"), config)
       .then(response => {
-        console.log('image uploaded ', response);
         this.props.hideModals();
       })
       .catch(response => {
@@ -105,16 +100,16 @@ export default class NewProductAdmin extends React.Component {
   };
 
   buildNewProductParams = () => {
-    let data = {};
-    data.name = this.state.name;
-    data.price = this.state.price;
-    data.priceAfterDiscount = this.state.priceAfterDiscount;
-    data.quantity = this.state.quantity;
-    data.description = this.state.description || "";
-    data.category = "/api/categories/" + this.state.category;
-    data.supplier = "/api/suppliers/" + this.state.supplier;
     return {
-      product: data
+      product: {
+        name: this.state.name,
+        price: this.state.price,
+        priceAfterDiscount: this.state.priceAfterDiscount,
+        quantity: this.state.quantity,
+        description: this.state.description || "",
+        category: "/api/categories/" + this.state.category,
+        supplier: "/api/suppliers/" + this.state.supplier
+      }
     };
   };
 
@@ -196,7 +191,8 @@ export default class NewProductAdmin extends React.Component {
                   <Label for="priceAfterDiscount" sm={4}>Cena po slevě</Label>
                   <Col sm={8}>
                     <InputGroup>
-                      <Input onChange={this.onInputChange} type="number" name="priceAfterDiscount" id="priceAfterDiscount"/>
+                      <Input onChange={this.onInputChange} type="number" name="priceAfterDiscount"
+                             id="priceAfterDiscount"/>
                       <InputGroupAddon>Kč</InputGroupAddon>
                     </InputGroup>
                   </Col>
@@ -206,7 +202,8 @@ export default class NewProductAdmin extends React.Component {
                   <Label for="quantity" sm={4}>Skladem</Label>
                   <Col sm={8}>
                     <InputGroup>
-                      <Input onChange={this.onInputChange} type="number" name="quantity" id="quantity" defaultValue="0"/>
+                      <Input onChange={this.onInputChange} type="number" name="quantity" id="quantity"
+                             defaultValue={this.state.quantity}/>
                       <InputGroupAddon>Ks</InputGroupAddon>
                     </InputGroup>
                   </Col>
