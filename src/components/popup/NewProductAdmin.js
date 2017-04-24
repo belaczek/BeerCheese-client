@@ -73,7 +73,6 @@ export default class NewProductAdmin extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    let formData = new FormData(event.target);
     api.post('products', this.buildNewProductParams())
       .then(response => {
         // TODO this.uploadProductImage(response.data.product, formData)
@@ -84,20 +83,21 @@ export default class NewProductAdmin extends React.Component {
       });
   };
 
-  uploadProductImage = (newProduct, formData) => {
+  // použiju později
+  /*uploadProductImage = (newProduct, formData) => {
     let config = {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     };
     imageApi.post(newProduct.image, formData.get("image"), config)
-      .then(response => {
+      .then(() => {
         this.props.hideModals();
       })
       .catch(response => {
         console.log('error uploading image ', response);
       });
-  };
+  };*/
 
   buildNewProductParams = () => {
     return {

@@ -46,7 +46,7 @@ export function createRoutes(store) {
 
   return (
     <Route path="/">
-      <Route path="/app/admin">
+      <Route path="/admin">
         <IndexRoute component={AdminLoginPage} />
         <Route component={AdminRootPage}>
           <Route
