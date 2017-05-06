@@ -101,6 +101,7 @@ export default class NewProductAdmin extends React.Component {
       })
       .catch(error => {
         console.log('error uploading image ', error);
+        this.props.hideModals();
       });
   };
 
