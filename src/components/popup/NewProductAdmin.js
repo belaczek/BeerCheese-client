@@ -6,8 +6,6 @@ import {
 
 import api, { imageApi } from '../../api';
 
-const IMAGE_BOUNDARY = '--------------------imageboundary';
-
 export default class NewProductAdmin extends React.Component {
 
   state = {
@@ -86,16 +84,10 @@ export default class NewProductAdmin extends React.Component {
   };
 
   uploadImage = (url) => {
-    let headers = {
-      headers: {'Content-Type': 'multipart/form-data; boundary=' + IMAGE_BOUNDARY}
-    };
-    let body = IMAGE_BOUNDARY +
-      '\r\nContent-Disposition: form-data; name="image"; filename="image.jpg"' +
-      '\r\nContent-Type: image/jpeg\r\n\r\n' +
-      this.state.image +
-      '\r\n' + IMAGE_BOUNDARY + '\r\n';
+    let data = new FormData();
+    data.append('image', this.state.image, 'image');
 
-    imageApi.post(url, body, headers)
+    imageApi.post(url, data)
       .then(() => {
         this.props.hideModals();
       })
@@ -149,15 +141,9 @@ export default class NewProductAdmin extends React.Component {
   };
 
   handleImageChange = (event) => {
-    let reader = new FileReader();
     let file = event.target.files[0];
 
-    reader.onload = (upload) => {
-      this.setState({
-        image: upload.target.result
-      });
-    };
-    reader.readAsDataURL(file);
+    this.setState({ image: file });
   };
 
   onInputChange = (event) => {
