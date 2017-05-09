@@ -5,6 +5,7 @@ import localizedTexts from '../../text_localization/LocalizedStrings';
 import { connect } from 'react-redux';
 import { addressFields } from '../../pages/packages_overview/PackageOverviewDeliveryDetailsPage';
 import { isString } from '../../util/util';
+import { openModal } from '../../actions/openModal';
 
 const links = [
   {
@@ -80,7 +81,13 @@ class PackageOverviewNav extends Component {
       this.context.router.push(link.link);
       this.updateCurrentLinkIndex();
     } else {
-      alert('Vyplňte správně všechna povinná pole');
+      this.props.openModal({
+        name: 'alert',
+        data: {
+          type: "danger",
+          message: 'Vyplňte správně všechna povinná pole'
+        }
+      });
     }
   }
 
@@ -140,4 +147,4 @@ const mapSateToProps = state => ({
   cart: state.cart,
 });
 
-export default connect(mapSateToProps, {  })(PackageOverviewNav);
+export default connect(mapSateToProps, { openModal })(PackageOverviewNav);

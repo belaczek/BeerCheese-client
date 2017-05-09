@@ -4,6 +4,8 @@ import localizedTexts from '../../text_localization/LocalizedStrings';
 import { connect } from 'react-redux';
 import { paymentOptions } from './PackageOverviewDelPayPage';
 import { clearCart } from '../../actions/cart';
+import { openModal } from '../../actions/openModal';
+import api from '../../api.js';
 
 class packageOverviewSummaryPage extends Component {
   constructor(props) {
@@ -34,9 +36,95 @@ class packageOverviewSummaryPage extends Component {
   }
 
   sendOrder() {
-    alert('Objednávka odeslána');
+    this.sendAddresses();
+    this.props.openModal({
+      name: 'alert',
+      data: {
+        type: "success",
+        message: 'Objednávka odeslána'
+      }
+    });
     this.props.clearCart();
     this.context.router.push('/');
+  }
+
+  sendAddresses() { 
+    const { cart } = this.props;
+    api.post('/addresses', {
+      "address": {
+        "name": cart.billingAddress.firstName + ' ' + cart.billingAddress.lastName,
+        "street": cart.billingAddress.street,
+        "city": cart.billingAddress.city,
+        "country": "/api/countries/55",
+        "note": cart.billingAddress.email + ' , ' + cart.billingAddress.phone,
+      }
+    }).then(response => {
+      const billingAddressId = response.data.address.id;
+      let shippingAddressId = response.data.address.id;
+      if (cart.differentShipping) {
+        api.post('/addresses', {
+          "address": {
+            "name": cart.shippingAddress.firstName + ' ' + cart.shippingAddress.lastName,
+            "street": cart.shippingAddress.street,
+            "city": cart.shippingAddress.city,
+            "country": "/api/countries/55",
+            "note": cart.shippingAddress.email + ' , ' + cart.shippingAddress.phone,
+          }
+        }).then(response2 => {
+          shippingAddressId = response2.data.address.id;
+          this.sendOrderData(billingAddressId, shippingAddressId);
+        }).catch(function (response2) {
+          console.log('error', response2);
+        });;
+      } else {
+        this.sendOrderData(billingAddressId, shippingAddressId);
+      }
+    }).catch(function (response) {
+      console.log('error', response);
+    });
+  }
+
+  sendOrderData(billingAddressId, shippingAddressId) {
+    const { cart } = this.props;
+    let orderData = {
+      "status": "Preparing",
+      "paymentType": cart.paymentType,
+      "shipping": "/api/shippings/" + cart.shipping.id,
+      "shippingAddress": "/api/addresses/" + shippingAddressId,
+      "billingAddress": "/api/addresses/" + billingAddressId,
+    };
+    api.post('/orders', {
+      "order": orderData
+    }).then(response => {
+      this.sendPackages(response.data.order.id);
+    }).catch(function (response) {
+      console.log('error', response);
+    });;
+  }
+
+  sendPackages(orderId) {
+    const { cart } = this.props;
+    cart.packages.forEach((_package) => {
+      if (_package.isCreating !== true) {
+        const packageData = {
+          package: {
+            order: "/api/orders/" + orderId,
+            products: []
+          }
+        }
+        _package.items.forEach((item) => {
+          packageData.package.products.push({
+            product: "/api/products/" + item.id,
+            quantity: 1
+          });
+        });
+        api.post('/packages', packageData).then(response => {
+          
+        }).catch(function (response) {
+          console.log('error', response);
+        });;
+      }
+    });
   }
 
   render() {
@@ -76,4 +164,4 @@ const mapSateToProps = state => ({
   cart: state.cart,
 });
 
-export default connect(mapSateToProps, { clearCart })(packageOverviewSummaryPage);
+export default connect(mapSateToProps, { clearCart, openModal })(packageOverviewSummaryPage);

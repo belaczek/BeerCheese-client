@@ -23,12 +23,21 @@ export default class EditOrderAdmin extends React.Component {
           ...order
         });
 
-        api.get(order.user.replace(API, ''))
-          .then(responseUser => {
-            this.setState({
-                user: responseUser.data.user.firstName + ' ' + responseUser.data.user.lastName
+        if (order.user.split('/')[3].length > 0) {
+          api.get(order.user.replace(API, ''))
+            .then(responseUser => {
+              this.setState({
+                  user: responseUser.data.user.firstName + ' ' + responseUser.data.user.lastName
+              });
             });
-          });
+        } else {
+          api.get(order.billingAddress.replace(API, ''))
+            .then(responseAddress => {
+              this.setState({
+                  user: responseAddress.data.address.name
+              });
+            });
+        }
 
         api.get(order.shipping.replace(API, ''))
           .then(responseShipping => {

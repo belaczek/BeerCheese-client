@@ -35,20 +35,21 @@ class ProductList extends Component {
 
     if (!isNull(products) && products.length) {
       return products.map(({ product }) => (
-        <Product
-          product={product}
-          size={this.props.itemSize}
-          addCartButton={
-            this.props.addCartButton === undefined
-              ? false
-              : this.props.addCartButton
-          }
-          currentPackage={
-            this.props.currentPackage === undefined
-              ? false
-              : this.props.currentPackage
-          }
-        />
+          <Product
+            key={product.id}
+            product={product}
+            size={this.props.itemSize}
+            addCartButton={
+              this.props.addCartButton === undefined
+                ? false
+                : this.props.addCartButton
+            }
+            currentPackage={
+              this.props.currentPackage === undefined
+                ? false
+                : this.props.currentPackage
+            }
+          />
       ));
     }
   }
