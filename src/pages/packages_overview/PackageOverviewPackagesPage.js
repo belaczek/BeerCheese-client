@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Table, Button, Input } from 'reactstrap';
+import { Link } from 'react-router';
 import localizedTexts from '../../text_localization/LocalizedStrings';
 import { updateCart } from '../../actions/cart';
 import { connect } from 'react-redux';
+import { openModal } from '../../actions/openModal';
 
 class PackageOverviewPackagesPage extends Component {
 
@@ -49,6 +51,19 @@ class PackageOverviewPackagesPage extends Component {
             onClick={() => {this.context.router.push('/edit-package/' + key)}}>{localizedTexts.PackageOverview.packages.edit}</Button></td>
           <td><Button size="sm" color="secondary"
           onClick={(e) => {this.removePackage(key);}}>{localizedTexts.PackageOverview.packages.remove}</Button></td>
+          <td>
+            <Button
+            size="sm"
+            color="secondary"
+            tag={Link}
+            to="#"
+            onClick={(e) => {
+              e.preventDefault();
+              this.props.openModal({ name: 'packageDetails', data: null })}}
+            >
+              Náhled
+            </Button>
+          </td>
         </tr>
       );
     });
@@ -74,4 +89,4 @@ const mapSateToProps = state => ({
   cart: state.cart
 });
 
-export default connect(mapSateToProps, { updateCart })(PackageOverviewPackagesPage);
+export default connect(mapSateToProps, { updateCart, openModal })(PackageOverviewPackagesPage);

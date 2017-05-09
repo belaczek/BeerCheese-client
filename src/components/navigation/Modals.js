@@ -9,6 +9,7 @@ import NewSupplierAdmin from '../popup/NewSupplierAdmin';
 import EditSupplierAdmin from '../popup/EditSupplierAdmin';
 import EditOrderAdmin from '../popup/EditOrderAdmin';
 import LogIn from '../popup/LogIn';
+import PackageDetails from '../popup/PackageDetails';
 import Alert from '../popup/Alert';
 
 const Modals = (props) => {
@@ -23,6 +24,7 @@ const Modals = (props) => {
       {props.openModal.name === 'editOrderAdmin' ? <EditOrderAdmin data={props.openModal.data}  hideModals={props.hideModals}/> : ''}
       {props.openModal.name === 'alert' ? <Alert data={props.openModal.data}  hideModals={props.hideModals}/> : ''}
       {props.openModal.name === 'logIn' ? <LogIn hideModals={props.hideModals}/> : ''}
+      {props.openModal.name === 'packageDetails' ? <PackageDetails data={props.openModal.data}  hideModals={props.hideModals}/> : ''}
     </div>
   );
 };
