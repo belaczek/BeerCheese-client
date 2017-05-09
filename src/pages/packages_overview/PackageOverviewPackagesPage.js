@@ -59,7 +59,7 @@ class PackageOverviewPackagesPage extends Component {
             to="#"
             onClick={(e) => {
               e.preventDefault();
-              this.props.openModal({ name: 'packageDetails', data: null })}}
+              this.props.openModal({ name: 'packageDetails', data: _package })}}
             >
               Náhled
             </Button>

@@ -10,18 +10,13 @@ class PackageDetails extends React.Component {
 
   state = { };
 
-  handleLogin = event => {
-    event.preventDefault();
-
-  };
-
   render() {
-    const { currentPackage, hideModals } = this.props;
+    const { data, hideModals } = this.props;
 
     return (
       <Modal isOpen={true} toggle={hideModals}>
         <ModalBody>
-          <Preview currentPackage={currentPackage}/>
+          <Preview currentPackage={data}/>
         </ModalBody>
       </Modal>
     );
@@ -29,7 +24,7 @@ class PackageDetails extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  currentPackage: state.currentPackage,
+  cart: state.cart,
 });
 
 export default connect(mapStateToProps, {  })(PackageDetails);
