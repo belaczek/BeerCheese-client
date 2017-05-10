@@ -16,9 +16,9 @@ export default class EditOrderAdmin extends React.Component {
   };
 
   componentWillMount() {
-    api.get('orders/'+this.props.data.id)
+    api.get('orders/' + this.props.data.id)
       .then(response => {
-        const { order } = response.data;
+        const {order} = response.data;
         this.setState({
           ...order
         });
@@ -27,14 +27,14 @@ export default class EditOrderAdmin extends React.Component {
           api.get(order.user.replace(API, ''))
             .then(responseUser => {
               this.setState({
-                  user: responseUser.data.user.firstName + ' ' + responseUser.data.user.lastName
+                user: responseUser.data.user.firstName + ' ' + responseUser.data.user.lastName
               });
             });
         } else {
           api.get(order.billingAddress.replace(API, ''))
             .then(responseAddress => {
               this.setState({
-                  user: responseAddress.data.address.name
+                user: responseAddress.data.address.name
               });
             });
         }
@@ -45,6 +45,72 @@ export default class EditOrderAdmin extends React.Component {
               shipping: responseShipping.data.shipping.name
             });
           });
+
+        api.get(order.links.ordersPackages.replace(API, ''))
+          .then(responsePackages => {
+
+            let packages = responsePackages.data.packages.items.map((item) => {
+              return item.package;
+            });
+
+            /*let newPackages = Array.copy(packages);
+
+            for (let pacId in packages) {
+              console.log("iterating package id", pacId);
+              for (let proId in packages[pacId]) {
+
+                api.get(packages[pacId][proId].product.replace(API, ''))
+                  .then(loadedProduct => {
+                    console.log("loaddedProduct", loadedProduct);
+                  });
+              }
+            }*/
+
+            //console.log("packages", packages);
+
+            const promises = packages.map(p => {
+              const productPromises = p.products.map(pro => {
+                return new Promise((resolve, reject) => {
+                  api.get(pro.product.replace(API, ''))
+                    .then(loadedProduct => {
+                      return resolve(loadedProduct.data.product);
+                    }, reject);
+                });
+              });
+              return new Promise((resolve, reject) => {
+                Promise.all(productPromises).then(products => {
+                  return resolve({ ...p, products });
+                }, reject);
+              });
+            });
+
+            Promise.all(promises).then(newPackages => {
+              this.setState({
+                packages: newPackages
+              });
+            });
+
+            /*Promise.map(packages, (p) => {
+              return new Promise((resolve, reject) => {
+                Promise.map(p.products, (pro) => {
+                  return new Promise((resolve, reject) => {
+                    api.get(pro.product.replace(API, ''))
+                      .then(loadedProduct => {
+                        return resolve(loadedProduct.data.product);
+                      }, reject);
+                  });
+
+                }).then(products => {
+                  return resolve({...p, products});
+                }, reject)
+              });
+            }).then(newPackages => {
+              this.setState({
+                packages: newPackages
+              });
+            }, e => console.log(e));*/
+
+          });
       })
       .catch(response => {
         console.log('error ', response);
@@ -53,7 +119,7 @@ export default class EditOrderAdmin extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    if(confirm('Opravdu checte objednávku zrušit?')) {
+    if (confirm('Opravdu checte objednávku zrušit?')) {
       api.get('orders/' + this.props.data.id)
         .then((response) => {
           const order = response.data.order;
@@ -85,8 +151,17 @@ export default class EditOrderAdmin extends React.Component {
     }
   };
 
+  renderPackages = () => {
+    console.log("rendering", this.state.packages);
+    return this.state.packages.map((p) => {
+      return p.products.map(product => {
+        return <Row>{product.name}</Row>
+      })
+    });
+  };
+
   getData = () => {
-    if(this.state.id){
+    if (this.state.id) {
 
       return (
         <div>
@@ -140,9 +215,21 @@ export default class EditOrderAdmin extends React.Component {
               }
             </Col>
           </Row>
+
+          <Row>
+            <Col sm={4}>Produkty: </Col>
+            <Col sm={8}>
+              {
+                this.state.packages
+                  ? this.renderPackages()
+                  : <Loading/>
+              }
+            </Col>
+          </Row>
+
           {
             this.state.status === CANCELLED
-            ? ''
+              ? ''
               :
               <Row>
                 <Col sm={{size: 10, offset: 2}}>
@@ -153,7 +240,7 @@ export default class EditOrderAdmin extends React.Component {
           }
         </div>
       )
-    }else{
+    } else {
       return (
         <Loading/>
       )
