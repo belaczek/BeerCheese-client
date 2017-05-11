@@ -15,3 +15,4 @@
 * `git rebase -i HEAD~#` where `#` of commits you want to work with
 * rewrite `pick` to `fixup` for commits you want to squash(is squashed to commit above)
 * finish and push
+
